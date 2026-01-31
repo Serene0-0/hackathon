@@ -1,0 +1,8 @@
+# Python-generated files
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+
+.venv
+.env
