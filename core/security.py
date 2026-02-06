@@ -1,7 +1,10 @@
 """
 Security Utilities: JWT and Password Hashing
 """
+import hashlib
+import hmac
 import uuid
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict
 from jose import jwt, JWTError
@@ -79,3 +82,32 @@ def decode_access_token(token: str) -> Dict[str, Any]:
 
     except JWTError as e:
         raise JWTError(f"Token validation failed: {str(e)}")
+
+# refresh token functions
+def generate_refresh_token() -> str:
+    """
+    Generate refresh token
+    :return: opaque token
+    """
+    return f"rft_{secrets.token_urlsafe(32)}"
+
+
+def hash_refresh_token(token: str) -> str:
+    """
+    Hash refresh token using SHA-256 algorithm.
+    :param token: plain refresh token
+    :return: 64-character hexadecimal token
+    """
+    msg = f"{settings.TOKEN_PEPPER}:{token}".encode("utf-8")
+    return hashlib.sha256(msg).hexdigest()
+
+
+def verify_refresh_token(token: str, stored_hash: str) -> bool:
+    """
+    Verify refresh token
+    :param token: Opaque refresh token from header
+    :param stored_hash: Hashed refresh token from db
+    :return: bool: Ture if token is valid; else return False
+    """
+    computed_hash = hash_refresh_token(token)
+    return hmac.compare_digest(computed_hash, stored_hash)

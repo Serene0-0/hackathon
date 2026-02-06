@@ -35,13 +35,18 @@ class Base(DeclarativeBase):
         Converts CamelCase to snake_case (singular form).
 
         Examples:
-        - User -> user
-        - MoodRecord -> mood_record
-        - RefreshToken -> refresh_token
+        - User -> users
+        - MoodRecord -> mood_records
+        - RefreshToken -> refresh_tokens
         """
-        # Convert CamelCase to snake_case
-        name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', cls.__name__)
-        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()
+        # CamelCase -> snake_case
+        name = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", cls.__name__)
+        snake = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name).lower()
+
+        # naive pluralization: add 's' unless already endswith 's'
+        if not snake.endswith("s"):
+            snake += "s"
+        return snake
 
 
 class TimeStampMixin:

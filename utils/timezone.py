@@ -46,5 +46,5 @@ async def update_user_timezone_if_needed(db, user, header_timezone: Optional[str
     await db.commit()
     await db.refresh(user)
 
-    logger.info(f"User{user.id} timezone updated: {old_timezone} -> {header_timezone}")
+    logger.info(f"User{user.user_id} timezone updated: {old_timezone} -> {header_timezone}")
     return True

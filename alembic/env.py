@@ -15,6 +15,7 @@ from core.config import settings
 
 # import models
 from db.base import Base
+import models
 
 # Alembic Config
 config = context.config
@@ -29,6 +30,7 @@ if config.config_file_name is not None:
 # Metadata
 target_metadata = Base.metadata
 
+print("TABLES:", list(Base.metadata.tables.keys()))
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
@@ -55,7 +57,8 @@ def run_migrations_online() -> None:
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
-            target_metadata=target_metadata
+            target_metadata=target_metadata,
+            compare_type=True,
         )
 
         with context.begin_transaction():

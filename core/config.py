@@ -69,6 +69,22 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 3600  # 1 hour
     REFRESH_TOKEN_EXPIRE_SECONDS: int = 2592000  # 30 days
 
+    # Pepper for refresh token hashing
+    # Pepper for token hashing (optional)
+    TOKEN_PEPPER: str = ""
+
+    @field_validator("TOKEN_PEPPER")
+    @classmethod
+    def validate_pepper(cls, v: str) -> str:
+        """Validate pepper is set (optional but recommended)"""
+        if not v:
+            import warnings
+            warnings.warn(
+                "TOKEN_PEPPER not set. "
+                "Consider setting it for additional security."
+            )
+        return v
+
     # ========================================
     # CORS Settings
     # ========================================
