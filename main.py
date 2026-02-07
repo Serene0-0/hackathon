@@ -22,7 +22,8 @@ async def lifespan(app: FastAPI):
         if not user:
             user = User(user_id=DEMO_USER_ID,
                         email=DEMO_EMAIL,
-                        hashed_password="demo_no_login"
+                        hashed_password="demo_no_login",
+                        timezone="America/New_York"
             )
             db.add(user)
             await db.commit()

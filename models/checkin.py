@@ -3,10 +3,10 @@ Checkin Record Model
 """
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date
 import uuid
-from sqlalchemy import String, DateTime, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
 from db import Base, TimeStampMixin
@@ -25,7 +25,7 @@ class CheckinRecord(Base, TimeStampMixin):
         index=True
     )
 
-    local_date : Mapped[datetime] = mapped_column(default=datetime.utcnow())
+    local_date: Mapped[date] = mapped_column(nullable=False)
     timezone_used: Mapped[str | None] = mapped_column(
         String(50),
         nullable=True,
