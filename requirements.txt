@@ -11,7 +11,7 @@ python-multipart==0.0.6
 sqlalchemy[asyncio]==2.0.25
 alembic==1.13.1
 asyncpg==0.29.0
-psycopg[binary]==3.1.18
+psycopg[binary]>=3.1,<4
 
 # ========================================
 # Authentication & Security
@@ -22,7 +22,7 @@ passlib[bcrypt]==1.7.4
 # ========================================
 # Configuration & Validation
 # ========================================
-pydantic==2.5.3
+pydantic>=2.9,<3.0.0
 pydantic-settings==2.1.0
 python-dotenv==1.0.0
 email-validator==2.1.1
@@ -31,7 +31,7 @@ email-validator==2.1.1
 # AI Service (Claude API)
 # ========================================
 anthropic==0.39.0
-httpx==0.26.0
+httpx>=0.28.1,<1.0.0
 
 # ========================================
 # Utilities

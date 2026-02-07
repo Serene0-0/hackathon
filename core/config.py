@@ -55,9 +55,15 @@ class Settings(BaseSettings):
     def database_url_sync(self) -> str:
         """
         Sync database URL for Alembic migrations.
-        Converts postgresql+asyncpg:// to postgresql://
+        Force psycopg3 driver to avoid psycopg2 dependency.
         """
-        return self.DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://").replace("+asyncpg", "")
+        url = self.DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://").replace("+asyncpg", "")
+
+        # minimal change: if it is plain postgresql://, force psycopg3 driver
+        if url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+psycopg://", 1)
+
+        return url
 
     # ========================================
     # Security Settings

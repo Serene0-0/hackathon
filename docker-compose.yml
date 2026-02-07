@@ -1,0 +1,41 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    environment:
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      SMTP_FROM: "no-reply@lumenary.local"
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: lumenary
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lumenary"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025" # Web UI
+      - "1025:1025" # SMTP
+
+volumes:
+  pgdata:

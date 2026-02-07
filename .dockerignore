@@ -1,0 +1,30 @@
+# secrets / env
+.env
+*.env
+.env.*
+
+# python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# virtual env
+.venv/
+venv/
+
+# git / ide
+.git/
+.gitignore
+.idea/
+.vscode/
+
+# mac/windows junk
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
