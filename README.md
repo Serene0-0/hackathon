@@ -14,3 +14,14 @@ Backend API for Mood Tracker - AI-powered mood tracking app for international st
 ## activate virtual environment
 source .venv/bin/activate
 
+## using venv install
+```bash
+PKG=(pytest-mock)
+uv pip install "$PKG" --python ../venv/bin/python
+```
+
+## generate key/token pepper
+```bash
+openssl rand -base64 32
+```
+

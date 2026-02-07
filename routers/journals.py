@@ -5,12 +5,15 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from deps import get_db, get_current_user_demo
+from ai.gemini_client import GeminiClient
+from deps import get_db, get_current_user_demo, get_gemini_client
 from models.user import User
 
 from schemas.journals import (JournalCreateRequest, JournalRecord, JournalRecordList,
                               ApiResponseJournal, ApiResponseJournalList)
+from schemas.warm_messages import ApiResponseJournalWithWarmMessage, JournalWithWarmMessage
 from services.journals_service import create_journal, get_today_journals, get_random_journal, list_journals_by_date
+from services.warm_msg_service import get_or_generate_warm_message_for_journal
 from .resolve_tz import resolve_tz
 
 router = APIRouter(tags=["Journals"])
@@ -82,3 +85,27 @@ async def get_random_journal_entry(
 
     data = JournalRecord.model_validate(obj)
     return ApiResponseJournal(data=data, message="OK")
+
+
+@router.get("/journals/random-with-msg", response_model=ApiResponseJournalWithWarmMessage)
+async def get_random_journal_with_msg(
+    exclude_today: bool = Query(True),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user_demo),
+    gemini: GeminiClient = Depends(get_gemini_client),
+    x_user_timezone: Optional[str] = Header(None, alias="X-User-Timezone"),
+):
+    tz = await resolve_tz(db, user, x_user_timezone)
+
+    journal = await get_random_journal(db=db, user_id=user.user_id, tz=tz, exclude_today=exclude_today)
+    if journal is None:
+        raise HTTPException(status_code=404, detail="No journals found")
+
+    warm_msg = await get_or_generate_warm_message_for_journal(db=db, journal=journal, gemini=gemini)
+
+    data = JournalWithWarmMessage(
+        **JournalRecord.model_validate(journal).model_dump(),
+        warm_message=warm_msg,
+    )
+
+    return ApiResponseJournalWithWarmMessage(data=data, message="OK")

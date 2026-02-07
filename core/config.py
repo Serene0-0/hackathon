@@ -4,7 +4,7 @@ Application Configuration
 Manages all configuration settings using Pydantic Settings.
 Environment variables are loaded from .env file.
 """
-from typing import List, Any
+from typing import List, Any, Optional
 from pydantic import field_validator, ConfigDict
 from pydantic_settings import BaseSettings
 
@@ -107,9 +107,10 @@ class Settings(BaseSettings):
         return []
 
     # ========================================
-    # AI Service Settings (Anthropic Claude)
+    # AI Service Settings
     # ========================================
-    ANTHROPIC_API_KEY: str = ""
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-3-flash-preview"
 
     # ========================================
     # Logging Settings
