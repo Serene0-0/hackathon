@@ -38,7 +38,7 @@ async def get_random_journal(db: AsyncSession, user_id,
     today = local_today(tz)
     stmt = select(Journal).where(Journal.user_id == user_id)
     if exclude_today:
-        stmt = select(Journal).where(Journal.local_date != today)
+        stmt = stmt.where(Journal.local_date != today)
     stmt = stmt.order_by(func.random()).limit(1)
 
     result = (await db.execute(stmt)).scalars().first()
