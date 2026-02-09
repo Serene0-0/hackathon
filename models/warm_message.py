@@ -48,6 +48,7 @@ class WarmMessageGroup(Base, TimeStampMixin):
     alternatives : Mapped[List["WarmMessage"]] = relationship(
         back_populates="group",
         cascade="all, delete-orphan",
+        lazy="selectin"
     )
 
     # relationship
@@ -83,7 +84,8 @@ class WarmMessage(Base, TimeStampMixin):
 
     # relationship
     group : Mapped["WarmMessageGroup"] = relationship(
-        back_populates="alternatives"
+        back_populates="alternatives",
+        lazy="selectin"
     )
 
 

@@ -8,7 +8,7 @@ from sqlalchemy import select
 from core.config import settings
 from core.security import hash_password
 from core.migrations import run_migrations_if_enabled
-from jobs.miss_checkin_scheduler import start_miss_checkin_scheduler
+from jobs.miss_checkin_scheduler import start_miss_checkin_scheduler, stop_miss_checkin_scheduler
 from models import User
 from routers import api_router
 from db.session import AsyncSessionLocal
@@ -33,11 +33,11 @@ async def lifespan(app: FastAPI):
             db.add(user)
             await db.commit()
     # 2) startup: start scheduler
-    scheduler = start_miss_checkin_scheduler()
+    start_miss_checkin_scheduler()
     try:
         yield
     finally:
-        scheduler.shutdown(wait=False)
+        stop_miss_checkin_scheduler()
 
 
 

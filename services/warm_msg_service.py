@@ -3,6 +3,7 @@ from datetime import timezone, datetime
 
 from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from ai.gemini_client import GeminiClient
 from models.journal import Journal
@@ -13,7 +14,9 @@ async def load_warm_message_group(
     db: AsyncSession,
     journal_id,
 ) -> WarmMessageGroup | None:
-    stmt = select(WarmMessageGroup).where(WarmMessageGroup.journal_id == journal_id)
+    stmt = (select(WarmMessageGroup)
+            .where(WarmMessageGroup.journal_id == journal_id)
+            .options(selectinload(WarmMessageGroup.alternatives)))
     return (await db.execute(stmt)).scalar_one_or_none()
 
 
