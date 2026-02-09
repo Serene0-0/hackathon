@@ -17,8 +17,9 @@ scheduler = AsyncIOScheduler()
 async def miss_checkin_job():
     try:
         async with AsyncSessionLocal() as db:
-            svc = MissCheckinScanService(db)
-            await svc.scan_and_alert()
+            email_svc = EmailService()
+            svc = MissCheckinScanService(db, email_svc)
+            await svc.scan_all()
     except Exception:
         logger.exception("miss_checkin_job failed")
 
