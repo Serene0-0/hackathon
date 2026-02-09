@@ -7,6 +7,7 @@ from sqlalchemy import select
 
 from core.config import settings
 from core.security import hash_password
+from core.migrations import run_migrations_if_enabled
 from jobs.miss_checkin_scheduler import start_miss_checkin_scheduler
 from models import User
 from routers import api_router
@@ -17,6 +18,9 @@ DEMO_EMAIL = "demo@test.com"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # migrations
+    run_migrations_if_enabled()
+
     # startup: ensure demo user exists (idempotent)
     async with AsyncSessionLocal() as db:
         user = (await db.execute(select(User).where(User.user_id == DEMO_USER_ID))).scalar_one_or_none()
